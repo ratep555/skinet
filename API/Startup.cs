@@ -15,6 +15,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using API.Helpers;
+using API.Middleware;
+using API.Errors;
+using Microsoft.OpenApi.Models;
+using API.Extensions;
 
 namespace API
 {
@@ -31,25 +35,28 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IProductRepository, ProductRepository>();
-            //ovako dodavaš generic repository
-            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+           
             services.AddAutoMapper(typeof(MappingProfiles));         
             services.AddControllers();
             services.AddDbContext<StoreContext>(options =>
                options.UseSqlServer(
                    _config.GetConnectionString("DefaultConnection")));
 
-                 
+            //ovime si pročistio startup (bit će dosta toga još, recimo identity), pozivaš se 
+            //na ovo dolje koje u sebi sadrži services
+            //koje si premjestio iz startupa u extensions/Applicationservices i swaggerdocumentation
+            services.AddApplicationServices();
+            services.AddSwaggerDocumentation();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ExceptionMiddleware>();
+            //ovime preusmjeravamo na errorcontroller, 0 je statuscode
+            //ako request dođe do servera, a mi nemamo odgovarajući naziv za njega, on odlazi ovdje
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 
@@ -57,6 +64,9 @@ namespace API
             app.UseStaticFiles();
 
             app.UseAuthorization();
+            
+            //i ovdje si kao i gore malo pročistio i pozvao se na ovo dolje (housekeeping kako kaže on:))
+            app.UseSwaggerDocumention();
 
             app.UseEndpoints(endpoints =>
             {
