@@ -39,6 +39,11 @@ namespace Infrastructure.Data
         {
             return await ApplySpecification(spec).ToListAsync();
         }
+          public async Task<int> CountAsync(ISpecification<T> spec)
+        {
+            //we want the number of results
+            return await ApplySpecification(spec).CountAsync();
+        }
         //we have access to T, this will be replaced with product for example
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
@@ -46,5 +51,7 @@ namespace Infrastructure.Data
             //T is for example product
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         }
+
+      
     }
 }
