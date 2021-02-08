@@ -21,6 +21,14 @@ namespace Core.Specifications
         //we are setting this by default to empty list
         public List<Expression<Func<T, object>>> Includes {get; } = 
             new List<Expression<Func<T, object>>>();
+        
+        //this method allows us to add include statements to our include list
+        //protected means that we can access this method from this class and any class that 
+        //derives from this class (child classes)
+        protected void AddInclude(Expression<Func<T, object>> includeExpression)
+        {
+            Includes.Add(includeExpression);
+        }
 
         //private set because we are adding the ability to set what this is inside
         //this particular class
@@ -34,13 +42,7 @@ namespace Core.Specifications
 
         public bool IsPagingEnabled {get; private set;}
 
-        //this method allows us to add include statements to our include list
-        //protected means that we can access this method from this class and any class that 
-        //derives from this class (child classes)
-        protected void AddInclude(Expression<Func<T, object>> includeExpression)
-        {
-            Includes.Add(includeExpression);
-        }
+        
 
         //these two methods down need to be evaluated by specificationevaluator
         protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
