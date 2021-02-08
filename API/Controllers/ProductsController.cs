@@ -37,7 +37,7 @@ namespace API.Controllers
 
         //here we need to tell api to look for the properties (search, typteid itd..) in querystring
         //zato stavljamo [fromquery]
-          [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts(
             [FromQuery]ProductSpecParams productParams)
         {
