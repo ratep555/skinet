@@ -19,6 +19,7 @@ using API.Middleware;
 using API.Errors;
 using Microsoft.OpenApi.Models;
 using API.Extensions;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -41,6 +42,13 @@ namespace API
             services.AddDbContext<StoreContext>(options =>
                options.UseSqlServer(
                    _config.GetConnectionString("DefaultConnection")));
+
+             //dodao si postavke za redis - baza za nešto kao inmemory cache
+             services.AddSingleton<IConnectionMultiplexer>(c => {
+                var configuration = ConfigurationOptions.Parse(_config
+                    .GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
 
             //ovime si pročistio startup (bit će dosta toga još, recimo identity), pozivaš se 
             //na ovo dolje koje u sebi sadrži services
