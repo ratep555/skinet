@@ -1,10 +1,10 @@
-<div class="container">
+<div class="container mt-3">
     <div class="row">
 
         <section class="col-3">
-
-           <h5 class="text-info ml-3">Sort</h5>
-           <select class="custom-select mb-3" (change)="onSortSelected($event.target.value)">
+<ng-container *ngIf="types && brands">
+           <h5 class="text-info ml-3 mt-4 mb-3">Sort</h5>
+           <select class="custom-select mb-4" (change)="onSortSelected($event.target.value)">
                <option *ngFor="let sort of sortOptions"
                   [value]="sort.value"
                >
@@ -34,6 +34,7 @@
             </li>
            
           </ul>
+        </ng-container>
         </section>
 
         <section class="col-9">
@@ -45,7 +46,7 @@
                    [pageNumber]="this.shopParams.pageNumber"
                ></app-paging-header>
 
-                <div class="form-inline mt-2">
+                <div class="form-inline" *ngIf="products">
                     <!-- with #search we are able to access this from our component .ts -->
                     <!-- sa keyup omogućujemo da bez stiskanja search gumba sve radi -->
                     <input (keyup.enter)="onSearch()" type="text" class="form-control mr-2" #search style="width: 300px" placeholder="Search">
