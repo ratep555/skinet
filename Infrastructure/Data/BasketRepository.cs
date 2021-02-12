@@ -33,7 +33,7 @@ namespace Infrastructure.Data
 
         public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
         {
-            //when updating, we will simply replace exiosting string with the new one
+            //when updating, we will simply replace existing string with the new one
             //timespan is matter of business decision, we will keep the basket for 30 days
             //trebaš uvijek voditi računa tu koliko memorije imaš
             var created = await _database.StringSetAsync(basket.Id, 

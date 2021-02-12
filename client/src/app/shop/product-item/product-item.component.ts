@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { IProduct } from 'src/app/shared/models/product';
+import { BasketService } from 'src/app/basket/basket.service';
 
 @Component({
   selector: 'app-product-item',
@@ -7,12 +8,15 @@ import { IProduct } from 'src/app/shared/models/product';
   styleUrls: ['./product-item.component.scss']
 })
 export class ProductItemComponent implements OnInit {
-  // ovako prosljeđujemo od parent (shop) component prema ovoj child component
-@Input() product: IProduct;
+  @Input() product: IProduct;
 
-  constructor() { }
+  constructor(private basketService: BasketService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+  }
+
+  addItemToBasket() {
+    this.basketService.addItemToBasket(this.product);
   }
 
 }
