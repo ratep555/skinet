@@ -8,7 +8,8 @@ namespace Infrastructure.Data
     //može ovdje biti samo T, ovo je da se bolje skuži
     public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
+        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, 
+        ISpecification<TEntity> spec)
         {
             var query = inputQuery;
 

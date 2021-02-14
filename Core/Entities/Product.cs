@@ -4,6 +4,8 @@ namespace Core.Entities
     //baseentity holds id
     public class Product : BaseEntity
     {
+        // required i ostale stvari si stavio u Infrastructure.Data.Config.ProductConfiguration
+        // lekcija 26
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }

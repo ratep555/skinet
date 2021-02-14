@@ -20,6 +20,7 @@ using API.Errors;
 using Microsoft.OpenApi.Models;
 using API.Extensions;
 using StackExchange.Redis;
+using Infrastructure.Identity;
 
 namespace API
 {
@@ -43,6 +44,10 @@ namespace API
                options.UseSqlServer(
                    _config.GetConnectionString("DefaultConnection")));
 
+            services.AddDbContext<AppIdentityDbContext>(x => 
+            {
+                x.UseSqlServer(_config.GetConnectionString("IdentityConnection"));
+            });
              //dodao si postavke za redis - baza za nešto kao inmemory cache
              services.AddSingleton<IConnectionMultiplexer>(c => {
                 var configuration = ConfigurationOptions.Parse(_config
@@ -54,6 +59,8 @@ namespace API
             //na ovo dolje koje u sebi sadrži services
             //koje si premjestio iz startupa u extensions/Applicationservices i swaggerdocumentation
             services.AddApplicationServices();
+            //ovo dodajemo identity sumiran u IdentityServiceExtensions
+            services.AddIdentityServices(_config);
             services.AddSwaggerDocumentation();
               services.AddCors(opt => 
             {
@@ -79,7 +86,9 @@ namespace API
             app.UseStaticFiles();
 
             app.UseCors("CorsPolicy");
-
+            
+            //ovo mora prije authorisation
+            app.UseAuthentication();
             app.UseAuthorization();
             
             //i ovdje si kao i gore malo pročistio i pozvao se na ovo dolje (housekeeping kako kaže on:))
