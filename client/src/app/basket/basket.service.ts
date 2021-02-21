@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IBasket, IBasketItem, Basket, IBasketTotals } from '../shared/models/basket';
 import { map } from 'rxjs/operators';
 import { IProduct } from '../shared/models/product';
+import { IDeliveryMethod } from '../shared/models/deliveryMethod';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +13,21 @@ import { IProduct } from '../shared/models/product';
 export class BasketService {
   baseUrl = environment.apiUrl;
   // Bsubject - Requires an initial value and emits the current value to new subscribers
-  // you have to give initial value - null
+  // you have to give it initial value - null
   private basketSource = new BehaviorSubject<IBasket>(null);
   // $ means it is observable
   basket$ = this.basketSource.asObservable();
   private basketTotalSource = new BehaviorSubject<IBasketTotals>(null);
   basketTotal$ = this.basketTotalSource.asObservable();
+  shipping = 0;
+
 
   constructor(private http: HttpClient) { }
+
+  setShippingPrice(deliveryMethod: IDeliveryMethod) {
+    this.shipping = deliveryMethod.price;
+    this.calculateTotals();
+  }
 
   getBasket(id: string) {
     return this.http.get(this.baseUrl + 'basket?id=' + id)
@@ -85,6 +93,14 @@ export class BasketService {
       }
     }
   }
+// this is a cleanup method, we are removing basket from memurai, so we are emptying
+// basket from the localstorage
+  deleteLocalBasket(id: string) {
+    this.basketSource.next(null);
+    this.basketTotalSource.next(null);
+    localStorage.removeItem('basket_id');
+  }
+
 
   deleteBasket(basket: IBasket) {
     return this.http.delete(this.baseUrl + 'basket?id=' + basket.id).subscribe(() => {
@@ -95,10 +111,10 @@ export class BasketService {
       console.log(error);
     });
   }
-
+// private because it will only accessible inside this
   private calculateTotals() {
     const basket = this.getCurrentBasketValue();
-    const shipping = 0;
+    const shipping = this.shipping;
     // items is array of items which can have more then one in terms of quantity
     // you need to sum that and reduce that into single number, hover over reduce
     // b is item, a is result, number that we are returning
